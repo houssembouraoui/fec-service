@@ -17,7 +17,13 @@ function Stars() {
     });
   }, []);
 
-  return <StarRatings rating={stars} starDimension="40px" starSpacing="15px" />;
+  return (
+    <div className="flex gap-4">
+      {" "}
+      <StarRatings rating={stars} starDimension="20px" starSpacing="4px" />{" "}
+      <h5 className="hover:underline">read all reviews</h5>
+    </div>
+  );
 }
 
 export default Stars;

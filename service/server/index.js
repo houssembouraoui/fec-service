@@ -12,6 +12,8 @@ app.use(express.static(path.join(__dirname, "../public")));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+//fetching the average of reviews
+
 app.get("/reviews/:product_id", (req, res) => {
   axios
     .get(`https://app-hrsei-api.herokuapp.com/api/fec2/hrnyc/reviews/`, {
@@ -19,10 +21,11 @@ app.get("/reviews/:product_id", (req, res) => {
         Authorization: process.env.API_KEY,
       },
       params: {
-        product_id: 11005,
+        product_id: req.params.product_id,
       },
     })
     .then((result) => {
+      // console.log("oooo weeee", result.data);
       let ratesData = result.data.results;
       let avreageRating = ratesData.reduce((acc, obj) => {
         return acc + obj.rating;
@@ -33,6 +36,46 @@ app.get("/reviews/:product_id", (req, res) => {
       console.log(err);
       res.status(500);
     });
+});
+
+//fetching product details
+
+app.get("/products/:product_id", (req, res) => {
+  axios
+    .get(
+      `https://app-hrsei-api.herokuapp.com/api/fec2/hrnyc/products/${req.params.product_id}`,
+      {
+        headers: {
+          Authorization: process.env.API_KEY,
+        },
+      }
+    )
+    .then((result) => {
+      res.status(200).send(result.data);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
+
+//fetching product images and thumbnails
+
+app.get(`/products/:product_id/styles/`, (req, res) => {
+  axios
+    .get(
+      `https://app-hrsei-api.herokuapp.com/api/fec2/hrnyc/products/${req.params.product_id}/styles`,
+      {
+        headers: {
+          Authorization: process.env.API_KEY,
+        },
+      }
+    )
+    .then((result) => {
+      res.status(200).send(result.data);
+
+      log(result.data);
+    })
+    .catch((err) => console.log(err));
 });
 
 app.listen(port, () => {
