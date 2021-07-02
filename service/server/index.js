@@ -71,9 +71,21 @@ app.get(`/products/:product_id/styles/`, (req, res) => {
       }
     )
     .then((result) => {
-      res.status(200).send(result.data);
+      console.log("where !!!!!!!!!!!!!!!!!!!!!!!!!", result.data);
 
-      log(result.data);
+      let info = result.data.results.map((item) => {
+        return {
+          thumbnail: item.photos[0].thumbnail_url,
+          main: item.photos[0].url,
+          id: item.style_id,
+          name: item.name,
+          price: item.original_price,
+          salePrice: item.sale_price,
+          skus: item.skus,
+        };
+      });
+      console.log(info);
+      res.status(200).send(info);
     })
     .catch((err) => console.log(err));
 });

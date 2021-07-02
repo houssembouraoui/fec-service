@@ -2,8 +2,7 @@ import "./index.css";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
-export default function Description() {
-  const [product_id, setId] = useState(11002);
+export default function Description(props) {
   const [category, setCategory] = useState("shoes");
   const [name, setName] = useState("airs");
   const [price, setPrice] = useState("150");
@@ -12,7 +11,7 @@ export default function Description() {
 
   useEffect(() => {
     axios
-      .get(`/products/${product_id}`)
+      .get(`/products/${props.id}`)
       .then((response) => {
         setCategory(response.data.category);
         setName(response.data.name);
@@ -31,13 +30,6 @@ export default function Description() {
       <h2>{price} $</h2>
       <h1>{slogan}</h1>
       <h4>style: selected style</h4>
-      <select className="gap-2">
-        <option className="gap-2">size XXL </option>
-        <option className="gap-2">size XL </option>
-        <option className="gap-2">size L </option>
-        <option className="gap-2">size M </option>
-        <option className="gap-2">size S </option>
-      </select>
     </>
   );
 }

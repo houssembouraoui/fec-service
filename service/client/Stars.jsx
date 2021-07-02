@@ -3,13 +3,13 @@ import React, { useEffect, useState } from "react";
 import StarRatings from "react-star-ratings";
 import axios from "axios";
 
-function Stars() {
+function Stars(props) {
   const [stars, setStars] = useState(1);
   const [product_id, setId] = useState(11001);
   const urlApi = "https://app-hrsei-api.herokuapp.com/api/fec2/hrnyc";
 
   useEffect(() => {
-    axios.get(`/reviews/${product_id}`).then((data) => {
+    axios.get(`/reviews/${props.id}`).then((data) => {
       setStars(data.data).catch((err) => {
         console.log(err, "failed to get data");
       });
