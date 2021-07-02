@@ -5,7 +5,6 @@ import axios from "axios";
 
 function Stars() {
   const [stars, setStars] = useState(1);
-  const [isLoading, setisLoading] = useState(true);
   const [product_id, setId] = useState(11001);
   const urlApi = "https://app-hrsei-api.herokuapp.com/api/fec2/hrnyc";
 
