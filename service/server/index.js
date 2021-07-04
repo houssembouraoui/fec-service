@@ -71,8 +71,6 @@ app.get(`/products/:product_id/styles/`, (req, res) => {
       }
     )
     .then((result) => {
-      console.log("where !!!!!!!!!!!!!!!!!!!!!!!!!", result.data);
-
       let info = result.data.results.map((item) => {
         return {
           thumbnail: item.photos[0].thumbnail_url,
@@ -81,10 +79,10 @@ app.get(`/products/:product_id/styles/`, (req, res) => {
           name: item.name,
           price: item.original_price,
           salePrice: item.sale_price,
+
           skus: item.skus,
         };
       });
-      console.log(info);
       res.status(200).send(info);
     })
     .catch((err) => console.log(err));
@@ -93,3 +91,4 @@ app.get(`/products/:product_id/styles/`, (req, res) => {
 app.listen(port, () => {
   console.log(`server running at: http://localhost:${port}`);
 });
+
