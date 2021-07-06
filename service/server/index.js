@@ -88,7 +88,24 @@ app.get(`/products/:product_id/styles/`, (req, res) => {
     .catch((err) => console.log(err));
 });
 
+//posting to the cart
+
+app.post(`/cart`, (req, res) => {
+  console.log(req.body);
+  axios
+    .post(
+      `https://app-hrsei-api.herokuapp.com/api/fec2/hrnyc/cart/`,
+      req.body,
+      {
+        headers: {
+          Authorization: process.env.API_KEY,
+        },
+      }
+    )
+    .then((response) => console.log(response.data))
+    .catch((err) => console.log(err));
+});
+
 app.listen(port, () => {
   console.log(`server running at: http://localhost:${port}`);
 });
-

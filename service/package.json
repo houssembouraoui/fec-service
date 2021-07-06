@@ -16,6 +16,9 @@
     "morgan": "^1.10.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
+    "react-native-dropdown-menu": "^2.0.0",
+    "react-native-material-dropdown": "^0.11.1",
+    "react-native-modal-dropdown": "^1.0.1",
     "react-star-ratings": "^2.3.0"
   },
   "devDependencies": {

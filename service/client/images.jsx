@@ -1,19 +1,23 @@
 import "./index.css";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-// import { arrowLeft } from "@heroicons/react";
 
 const Images = (props) => {
   const [images, setImages] = useState([]);
   const [main, setMain] = useState("");
+  let [index, setIndex] = useState(0);
+  let [selectQ, setSelectedQ] = useState(1);
   const [size, setSize] = useState("");
   const [category, setCategory] = useState("");
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
   const [style, setStyle] = useState("");
   const [slogan, setSlogan] = useState("");
-  let [index, setIndex] = useState(0);
   let [styleIndex, setStyleIndex] = useState(index);
+  const [quantity, setQuantity] = useState(4);
+  let [skus, setSkus] = useState(0);
+
+  // console.log(size);
 
   useEffect(() => {
     axios
@@ -32,13 +36,10 @@ const Images = (props) => {
   useEffect(() => {
     axios.get(`/products/${props.id}/styles`).then((response) => {
       // console.log(response.data);
-      setMain(response.data[0].main);
-      setSize(
-        response.data.map((element) => {
-          return element.skus;
-        })
-      );
+      setMain(response.data[index].main);
       setImages(response.data);
+      setSize(response.data[index].skus);
+      // console.log(response.data[index].skus);
     });
   }, []);
 
@@ -49,11 +50,40 @@ const Images = (props) => {
         setIndex(images.indexOf(image));
       }
     });
+    setSize(images[index].skus);
+  };
+
+  const changeQuantity = (e) => {
+    setSelectedQ(e.target.value);
+    console.log(e.target.value);
   };
 
   const changeSize = (e) => {
     setStyleIndex(e);
-    console.log(styleIndex);
+    setSize(images[index].skus);
+    // console.log(e.target.value);
+    // Object.values(size).forEach((skus, index) => {
+    //   if (e.target.value === skus.size) {
+    //     setQuantity(skus.quantity);
+    //     console.log(skus);
+    //   }
+    // });
+    console.log(Object.entries(size)[e.target.value][0]);
+    setQuantity(Object.entries(size)[e.target.value][1].quantity);
+    setSkus(Object.entries(size)[e.target.value][0]);
+  };
+
+  const addToBag = () => {
+    axios
+      .post(`/cart`, {
+        sku_id: skus,
+        count: quantity,
+      })
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((err) => console.log(err));
+    console.log("added bitch ");
   };
 
   const left = () => {
@@ -66,7 +96,8 @@ const Images = (props) => {
       setIndex(index--);
       setMain(images[index].main);
     }
-    console.log(images[index].price);
+    // console.log(images[index]);
+    // console.log(images);
   };
 
   const right = () => {
@@ -79,7 +110,8 @@ const Images = (props) => {
       setIndex(index++);
       setMain(images[index].main);
     }
-    console.log(Object.entries(size[index])[0][0]);
+    setSize(images[index].skus);
+    // console.log(Object.entries(size)[0][1].quantity);
   };
 
   return (
@@ -130,7 +162,7 @@ const Images = (props) => {
           />
         </svg>
         <div className="w-96">
-          {images.length && <img className=" mx-auto max-h-160 " src={main} />}
+          {images.length && <img className= /**" mx-auto max-h-160 "**/ " w-full   object-fill  rounded-2xl" src={main} />}
         </div>
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -165,7 +197,9 @@ const Images = (props) => {
         <h3>{category}</h3>
         <h2>{name}</h2>
         {images.length && (
-          <h2>{images[index].salePrice || images[index].price} $</h2>
+          // {{images[index].salePrice} ? <h3>images{[index].salePrice}</h3> : <h3>{images[index].price}}
+          // <h2>{images[index].salePrice || images[index].price} $</h2>
+          <>{images[index].salePrice ? <h3 className="text-red-600">{images[index].salePrice}</h3> : <h3>{images[index].price} </h3>}</>
         )}
         {images.length && (
           <h3 className="flex">selected style: {images[index].name} </h3>
@@ -183,18 +217,82 @@ const Images = (props) => {
             );
           })}
         </ul>
-        {Object.entries(size).length && (
-          <select className="gap-2 w-20 h-12">
-            {Object.entries(size[index]).map((taille) => {
-              return (
-                <option onClick={() => changeSize(6)} key={taille[0]}>
-                  {taille[1].size}
-                </option>
-              );
-            })}
-          </select>
-        )}
-        <select className=""></select>
+        <div className="gap-y-6 gap-x-6">
+          {Object.entries(size).length && (
+            <select
+              className="gap-6 z-10 mt-1 w-16 bg-white shadow-lg h-8 max-h-16 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm"
+              value={quantity}
+              onChange={changeSize}
+            >
+              {Object.entries(size).map((taille, i) => {
+                return (
+                  <option
+                    // onClick={() => changeSize}
+                    key={taille[0]}
+                    // value={taille[1].size.value}
+                    value={i}
+                  >
+                    {taille[1].size}
+                  </option>
+                );
+              })}
+            </select>
+          )}
+          {quantity && (
+            <select
+              className="absolute z-10 mt-1 w-16 bg-white shadow-lg h-8 max-h-16 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow focus:outline-none sm:text-sm"
+              value={quantity}
+              onChange={changeQuantity}
+            >
+              {[...Array(quantity)].map((q, i) => {
+                return (
+                  <option className=" bg-gray-100 text-gray-600" key={i}>
+                    {i + 1}
+                  </option>
+                );
+              })}
+            </select>
+          )}
+        </div>
+        {/* <h3 className="border border-indigo-600 w-36">
+          {" "}
+          ADD TO BAG
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            onClick={addToBag}
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+            />
+          </svg>
+        </h3> */}
+        <button
+          onClick={addToBag}
+          className="transition ease-in duration-300 inline-flex items-center text-sm font-medium mb-2 md:mb-0 bg-purple-500 px-5 py-2 hover:shadow-lg tracking-wider text-white rounded-full hover:bg-purple-600 "
+        >
+          <span>Add Cart</span>
+        </button>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-6 w-6 border-6"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={1}
+            d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"
+          />
+        </svg>
       </div>
     </>
   );
